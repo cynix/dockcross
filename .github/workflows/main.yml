@@ -18,7 +18,7 @@ jobs:
     name: base
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
       - name: build
         run: make base
       - name: test
@@ -780,7 +780,7 @@ jobs:
               cpython_arg: "",
             }
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
       - uses: actions/download-artifact@v2
         with:
           name: cache
