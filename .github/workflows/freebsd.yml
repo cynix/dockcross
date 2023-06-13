@@ -49,12 +49,15 @@ jobs:
       fail-fast: false
       matrix:
         arch_name:
-          # FreeBSD images
-          - {
-              image: "freebsd-x64",
-              ninja: "yes",
-              ninja_arg: "",
-            }
+
+          - image: freebsd-x64
+            ninja: yes
+            ninja_arg: ""
+
+          - image: freebsd-arm64
+            ninja: yes
+            ninja_arg: ""
+
     steps:
       - name: checkout code
         uses: actions/checkout@v3
