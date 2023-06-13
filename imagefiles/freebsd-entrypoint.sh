@@ -21,7 +21,6 @@ eval "export BINDGEN_EXTRA_CLANG_ARGS_${FREEBSD_TRIPLE_ENV}=\"--target=${FREEBSD
 
 export CARGO_BUILD_TARGET="$FREEBSD_TRIPLE"
 eval "export ${FREEBSD_TRIPLE_ENV^^}_OPENSSL_DIR=\"${FREEBSD_SYSROOT}/usr\""
-eval "export ${FREEBSD_TRIPLE_ENV^^}_OPENSSL_STATIC=1"
 
 if [ -n "$BUILDER_UID" ] && [ -n "$BUILDER_GID" ]; then
   chown -R "$BUILDER_UID":"$BUILDER_GID" /usr/local/cargo /usr/local/rustup
