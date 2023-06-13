@@ -45,6 +45,10 @@ GEN_IMAGE_DOCKERFILES = $(addsuffix /Dockerfile,$(GEN_IMAGES))
 NON_STANDARD_IMAGES = manylinux_2_28-x64 manylinux2014-x64 manylinux2014-x86 \
 		      manylinux2014-aarch64 web-wasm
 
+FREEBSD_IMAGES = freebsd-x64
+FREEBSD_GEN_IMAGES = freebsd-x64
+FREEBSD_GEN_IMAGE_DOCKERFILES = $(addsuffix /Dockerfile,$(FREEBSD_GEN_IMAGES))
+
 # Docker composite files
 DOCKER_COMPOSITE_SOURCES = common.docker common.debian common.manylinux2014 common.manylinux_2_28 common.buildroot \
 	common.crosstool common.webassembly common.windows common-manylinux.crosstool common.dockcross \
@@ -107,6 +111,15 @@ $(GEN_IMAGE_DOCKERFILES) Dockerfile: %Dockerfile: %Dockerfile.in $(DOCKER_COMPOS
 		-e '/common.webassembly/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.webassembly' \
 		-e '/common.windows/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.windows' \
 		-e '/common.dockcross/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.dockcross' \
+		-e '/common.label-and-env/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.label-and-env' \
+		$< > $@
+
+$(FREEBSD_GEN_IMAGE_DOCKERFILES): %Dockerfile: %Dockerfile.in $(DOCKER_COMPOSITE_PATH)
+	sed \
+		-e '/common.docker/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.docker' \
+		-e '/common.debian/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.debian' \
+		-e '/common.dockcross/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.dockcross' \
+		-e '/common.freebsd/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.freebsd' \
 		-e '/common.label-and-env/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.label-and-env' \
 		$< > $@
 
@@ -256,10 +269,26 @@ $(STANDARD_IMAGES): %: %/Dockerfile base
 		$@
 	rm -rf $@/imagefiles
 
+$(FREEBSD_IMAGES): %: %/Dockerfile
+	mkdir -p $@/imagefiles && cp -r imagefiles $@/
+	$(DOCKER) build -t ghcr.io/cynix/dockcross-$@:latest \
+		-t ghcr.io/cynix/dockcross-$@:$(TAG) \
+		--build-arg ORG=cynix \
+		--build-arg IMAGE=ghcr.io/cynix/dockcross-$@ \
+		--build-arg VERSION=$(TAG) \
+		--build-arg VCS_REF=`git rev-parse --short HEAD` \
+		--build-arg VCS_URL=`git config --get remote.origin.url` \
+		--build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
+		$@
+	rm -rf $@/imagefiles
+
 clean:
 	for d in $(IMAGES) ; do rm -rf $$d/imagefiles ; done
 	for d in $(IMAGES) ; do rm -rf $(BIN)/dockcross-$$d ; done
 	for d in $(GEN_IMAGE_DOCKERFILES) ; do rm -f $$d ; done
+	for d in $(FREEBSD_IMAGES) ; do rm -rf $$d/imagefiles ; done
+	for d in $(FREEBSD_IMAGES) ; do rm -rf $(BIN)/dockcross-$$d ; done
+	for d in $(FREEBSD_GEN_IMAGE_DOCKERFILES) ; do rm -f $$d ; done
 	rm -f Dockerfile
 
 purge: clean
@@ -267,6 +296,7 @@ purge: clean
 	$(DOCKER) container ls -aq | xargs -r $(DOCKER) container rm -f
 # Remove all images with organization (ex dockcross/*)
 	$(DOCKER) images --filter=reference='$(ORG)/*' --format='{{.Repository}}:{{.Tag}}' | xargs -r $(DOCKER) rmi -f
+	$(DOCKER) images --filter=reference='ghcr.io/cynix/*' --format='{{.Repository}}:{{.Tag}}' | xargs -r $(DOCKER) rmi -f
 
 # Check bash syntax
 bash-check:
@@ -282,6 +312,12 @@ $(addsuffix .test,$(STANDARD_IMAGES)): $$(basename $$@)
 		&& chmod +x $(BIN)/dockcross-$(basename $@)
 	$(BIN)/dockcross-$(basename $@) -i $(ORG)/$(basename $@):latest python3 test/run.py $($@_ARGS)
 
+.SECONDEXPANSION:
+$(addsuffix .test,$(FREEBSD_IMAGES)): $$(basename $$@)
+	$(DOCKER) run $(RM) ghcr.io/cynix/dockcross-$(basename $@):latest > $(BIN)/dockcross-$(basename $@) \
+		&& chmod +x $(BIN)/dockcross-$(basename $@)
+	$(BIN)/dockcross-$(basename $@) -i ghcr.io/cynix/dockcross-$(basename $@):latest python3 test/run.py $($@_ARGS)
+
 #
 # testing prerequisites implicit rule
 #
@@ -290,4 +326,8 @@ test.prerequisites:
 
 $(addsuffix .test,base $(IMAGES)): test.prerequisites
 
+$(addsuffix .test,base $(FREEBSD_IMAGES)): test.prerequisites
+
 .PHONY: base images $(IMAGES) test %.test clean purge bash-check display_images
+
+.PHONY: $(FREEBSD_IMAGES)
