@@ -1,6 +1,6 @@
-set(CMAKE_SYSTEM_NAME Windows)
+set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSTEM_VERSION 1)
-set(CMAKE_SYSTEM_PROCESSOR aarch64)
+set(CMAKE_SYSTEM_PROCESSOR ppc64le)
 
 set(cross_triple $ENV{CROSS_TRIPLE})
 set(cross_root $ENV{CROSS_ROOT})
@@ -15,5 +15,13 @@ set(CMAKE_FIND_ROOT_PATH ${cross_root} ${cross_root}/${cross_triple})
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE BOTH)
+set(CMAKE_SYSROOT ${cross_root}/${cross_triple}/sysroot)
 
-set(CMAKE_CROSSCOMPILING_EMULATOR /usr/bin/qemu-aarch64)
+
+set(CMAKE_CROSSCOMPILING_EMULATOR /usr/bin/qemu-ppc64le)
+
+# Discard path returned by pkg-config and associated with HINTS in module
+# like FindOpenSSL.
+# set(CMAKE_IGNORE_PATH /usr/lib/x86_64-linux-gnu/ /usr/lib/x86_64-linux-gnu/lib/)
+
+# set(CMAKE_CROSSCOMPILING_EMULATOR /usr/bin/qemu-ppc64le)

@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: "recursive"
           fetch-depth: 1
@@ -699,6 +699,26 @@ jobs:
               cpython: "yes",
               cpython_arg: "--host=powerpc64le-unknown-linux-gnu --target=powerpc64le-unknown-linux-gnu",
             }
+          # Linux ppc64le-lts images
+          - {
+              image: "linux-ppc64le-lts",
+              stockfish: "yes",
+              stockfish_arg: "ARCH=ppc-64",
+              ninja: "yes",
+              ninja_arg: "",
+              openssl: "yes",
+              openssl_arg: "linux-ppc64le",
+              C: "yes",
+              C_arg: "",
+              C-Plus-Plus: "yes",
+              C-Plus-Plus_arg: "",
+              fmt: "yes",
+              fmt_arg: "",
+              raylib: "no",
+              raylib_arg: "",
+              cpython: "yes",
+              cpython_arg: "--host=powerpc64le-unknown-linux-gnu --target=powerpc64le-unknown-linux-gnu",
+            }
           # Linux m68k images
           - {
               image: "linux-m68k-uclibc",
@@ -860,17 +880,17 @@ jobs:
               image: "windows-armv7",
               stockfish: "no",
               stockfish_arg: "ARCH=armv7-neon COMP=clang",
-              ninja: "no",
+              ninja: "yes",
               ninja_arg: "",
               openssl: "no",
               openssl_arg: "mingw no-asm",
               C: "no",
               C_arg: "",
-              C-Plus-Plus: "yes",
+              C-Plus-Plus: "no",
               C-Plus-Plus_arg: "",
               fmt: "yes",
               fmt_arg: "",
-              raylib: "no",
+              raylib: "yes",
               raylib_arg: "",
               cpython: "no",
               cpython_arg: "",
@@ -879,17 +899,17 @@ jobs:
               image: "windows-arm64",
               stockfish: "no",
               stockfish_arg: "ARCH=armv8 COMP=clang",
-              ninja: "no",
+              ninja: "yes",
               ninja_arg: "",
               openssl: "no",
               openssl_arg: "mingw64 no-asm",
               C: "no",
               C_arg: "",
-              C-Plus-Plus: "yes",
+              C-Plus-Plus: "no",
               C-Plus-Plus_arg: "",
               fmt: "yes",
               fmt_arg: "",
-              raylib: "no",
+              raylib: "yes",
               raylib_arg: "",
               cpython: "no",
               cpython_arg: "",
@@ -1037,7 +1057,7 @@ jobs:
             }
     steps:
       - name: checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: "recursive"
           fetch-depth: 1

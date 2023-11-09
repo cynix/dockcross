@@ -106,6 +106,7 @@ The dockcross script will execute the given command-line inside the container, a
 | dockcross/linux-mipsel-lts | mipsel | GCC 8.5.0 + Glibc 2.28 | Linux |
 | dockcross/linux-s390x | s390x | GCC | Linux |
 | dockcross/linux-ppc64le | ppc64le | GCC | Linux |
+| dockcross/linux-ppc64le-lts | ppc64le | GCC 8.5.0 + Glibc 2.28 | Linux |
 | dockcross/linux-riscv32 | riscv32 | GCC | Linux |
 | dockcross/linux-riscv64 | riscv64 | GCC | Linux |
 | dockcross/linux-m68k-uclibc | m68k | GCC + uclibc | Linux |
@@ -285,7 +286,7 @@ MIPS GNU systems.
 
 ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/dockcross/linux-mips-lts/latest) ![Docker Pulls](https://img.shields.io/docker/pulls/dockcross/linux-mips-lts)
 
-Linux mips cross compiler toolchain for big endian 32-bit hard float MIPS GNU systems, With GCC 8.5.0, Glibc 2.28 ....
+Linux mips cross compiler toolchain for big endian 32-bit hard float MIPS GNU systems, with GCC 8.5.0, Glibc 2.28 ....
 
 ### dockcross/linux-mipsel-lts
 
@@ -323,6 +324,12 @@ Linux m68k cross compiler toolchain for m68k GNU systems (http://www.mac.linux-m
 ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/dockcross/linux-ppc64le/latest) ![Docker Pulls](https://img.shields.io/docker/pulls/dockcross/linux-ppc64le)
 
 Linux PowerPC 64 little endian cross compiler toolchain for the POWER8, etc.
+
+### dockcross/linux-ppc64le-lts
+
+![Docker Image Size (tag)](https://img.shields.io/docker/image-size/dockcross/linux-ppc64le-lts/latest) ![Docker Pulls](https://img.shields.io/docker/pulls/dockcross/linux-ppc64le-lts)
+
+Linux PowerPC 64 little endian cross compiler toolchain for the POWER8, with GCC 8.5.0, Glibc 2.28 ....
 
 ### dockcross/linux-x64
 
@@ -569,7 +576,7 @@ The key difference is that [dockbuild](https://github.com/dockbuild/dockbuild#re
 
 ## Build images by yourself
 
-Perbuilt images available on Docker hub are single architecture amd64 images. Those images work evan on different architectures: for example, if you run a dockcross image on Docker running on an Apple M1, the image will run in emulation mode, meaning that it will still work as expected, although it will be slower than running on native hardware (you can expect a factor or 10 or more).
+Prebuilt images available on Docker hub are single architecture amd64 images. Those images work evan on different architectures: for example, if you run a dockcross image on Docker running on an Apple M1, the image will run in emulation mode, meaning that it will still work as expected, although it will be slower than running on native hardware (you can expect a factor or 10 or more).
 
 To overcome this limitation, you can build your own images on non-amd64 architectures. To do so, you can use the `Makefile` provided in this repository. For example, to build the `linux-armv7` image, and provided that your Docker hub organization name is `ACME`, you can run:
 
