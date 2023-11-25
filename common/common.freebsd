@@ -6,6 +6,7 @@ RUN \
     libc++-13-dev \
     lld-13 \
     llvm-13 \
+    zstd \
     && apt-get clean autoclean --yes \
     && apt-get autoremove --yes \
     && rm -rf /var/lib/{apt,dpkg,cache,log}
