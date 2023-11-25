@@ -21,7 +21,7 @@ for name in $PACKAGES; do
   path="${path//'"'/}"
 
   mkdir /tmp/freebsd-pkg/package
-  curl -sSfL "$REPO"/"$path" | tar -C /tmp/freebsd-pkg/package -xJf-
+  curl -sSfL "$REPO"/"$path" | zstd -dc | tar -C /tmp/freebsd-pkg/package -xf-
   cp -a /tmp/freebsd-pkg/package/usr/local/* "$FREEBSD_SYSROOT"/
   rm -rf /tmp/freebsd-pkg/package
 done
