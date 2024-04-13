@@ -30,10 +30,10 @@ jobs:
       - name: archive base
         run: |
           mkdir -p cache
-          docker save dockcross/base:latest | xz -e9 -T0 > ./cache/base.tar.xz
+          docker export dockcross/base:latest | xz -e9 -T0 > ./cache/base.tar.xz
 
       - name: save base
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cache
           path: ./cache
@@ -65,13 +65,13 @@ jobs:
           submodules: "recursive"
           fetch-depth: 1
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: cache
           path: ./cache
 
       - name: load base
-        run: xz -d -k < ./cache/base.tar.xz | docker load
+        run: xz -d -k < ./cache/base.tar.xz | docker import - dockcross/base:latest
 
       - name: build
         run: make ${{ matrix.arch_name.image }}
@@ -88,7 +88,7 @@ jobs:
           ../bin/dockcross-${{ matrix.arch_name.image }} ninja -C build-ninja
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
