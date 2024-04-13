@@ -24,7 +24,15 @@ jobs:
           submodules: "recursive"
           fetch-depth: 1
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: build
+        env:
+          BUILD_CMD: buildx build --platform linux/amd64,linux/arm64
         run: make base
 
       - name: test
@@ -33,14 +41,14 @@ jobs:
       - name: archive base
         run: |
           mkdir -p cache
-          docker save dockcross/base:latest | xz -e9 -T0 > ./cache/base.tar.xz
+          docker export dockcross/base:latest | xz -e9 -T0 > ./cache/base.tar.xz
 
       - name: save base
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cache
           path: ./cache
-          retention-days: 1
+          retention-days: 3
 
       - name: deploy
         if: github.ref == 'refs/heads/master'
@@ -1031,6 +1039,25 @@ jobs:
               cpython: "no",
               cpython_arg: "",
             }
+          - {
+              image: "web-wasi-threads",
+              stockfish: "no",
+              stockfish_arg: "",
+              ninja: "no",
+              ninja_arg: "",
+              openssl: "no",
+              openssl_arg: "linux-generic64 no-asm no-threads no-engine no-hw no-weak-ssl-ciphers no-dtls no-shared no-dso",
+              C: "no",
+              C_arg: "",
+              C-Plus-Plus: "no",
+              C-Plus-Plus_arg: "",
+              fmt: "no",
+              fmt_arg: "",
+              raylib: "no",
+              raylib_arg: "",
+              cpython: "no",
+              cpython_arg: "",
+            }
           # Bare metal images
           - {
               image: "bare-armv7emhf-nano_newlib",
@@ -1062,13 +1089,13 @@ jobs:
           submodules: "recursive"
           fetch-depth: 1
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: cache
           path: ./cache
 
       - name: load base
-        run: xz -d -k < ./cache/base.tar.xz | docker load
+        run: xz -d -k < ./cache/base.tar.xz | docker import - dockcross/base:latest
 
       - name: build
         run: make ${{ matrix.arch_name.image }}
@@ -1144,9 +1171,9 @@ jobs:
       - name: cpython build test
         if: ${{ matrix.arch_name.cpython == 'yes' }}
         run: |
-          git clone --depth 1 --branch v3.9.13 https://github.com/python/cpython.git
+          git clone --depth 1 --branch v3.11.2 https://github.com/python/cpython.git
           cd cpython
-          ./../tools/dockcross-command.sh ${{ matrix.arch_name.image }} ./configure ac_cv_file__dev_ptmx=no ac_cv_file__dev_ptc=no --disable-ipv6 ${{ matrix.arch_name.cpython_arg }} --build=x86_64-linux-gnu --enable-shared
+          ./../tools/dockcross-command.sh ${{ matrix.arch_name.image }} ./configure ac_cv_file__dev_ptmx=no ac_cv_file__dev_ptc=no --disable-ipv6 ${{ matrix.arch_name.cpython_arg }} --build=x86_64-linux-gnu --with-build-python --enable-shared
           ./../tools/dockcross-make-builder.sh ${{ matrix.arch_name.image }} -j2
           cd ..
           rm -rf cpython

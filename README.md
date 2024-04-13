@@ -122,6 +122,7 @@ The dockcross script will execute the given command-line inside the container, a
 | dockcross/linux-x64-tinycc | x86_64 | tinycc + GCC | Linux |
 | dockcross/web-wasm | Wasm | LLVM | Web (JS) |
 | dockcross/web-wasi | Wasm | LLVM | Web (Universal) |
+| dockcross/web-wasi-threads | Wasm | LLVM | Web (Universal) |
 | dockcross/windows-shared-x86 | x86 | GCC | Windows |
 | dockcross/windows-shared-x64 | x86_64 | GCC | Windows |
 | dockcross/windows-shared-x64-posix | x86_64 | GCC | Windows |
@@ -156,7 +157,7 @@ The list of docker images that are **no longer maintained**.
 
 ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/dockcross/base/latest) ![Docker Pulls](https://img.shields.io/docker/pulls/dockcross/base) ![Docker Stars](https://img.shields.io/docker/stars/dockcross/base)
 
-Base image for other toolchain images. From Debian Jessie with GCC, make, autotools, CMake, Ninja, Git, and Python.
+Base image for other toolchain images. From Debian Bookworm with GCC, make, autotools, CMake, Ninja, Git, and Python.
 
 ### dockcross/android-arm
 
@@ -403,6 +404,12 @@ The [Emscripten](https://emscripten.org/) [WebAssembly](https://webassembly.org/
 
 The [WebAssembly System Interface (WASI)](https://wasi.dev/) SDK LLVM/Clang/WASI Sysroot cross compiler.
 
+### dockcross/web-wasi-threads
+
+![Docker Image Size (tag)](https://img.shields.io/docker/image-size/dockcross/web-wasi-threads/latest) ![Docker Pulls](https://img.shields.io/docker/pulls/dockcross/web-wasi-threads)
+
+The [WebAssembly System Interface (WASI)](https://wasi.dev/) SDK LLVM/Clang/WASI Sysroot cross compiler with the toolchain configured to enable the wasm threading proposal.
+
 ### dockcross/windows-static-x64
 
 ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/dockcross/windows-static-x64/latest) ![Docker Pulls](https://img.shields.io/docker/pulls/dockcross/windows-static-x64)
@@ -576,7 +583,7 @@ The key difference is that [dockbuild](https://github.com/dockbuild/dockbuild#re
 
 ## Build images by yourself
 
-Prebuilt images available on Docker hub are single architecture amd64 images. Those images work evan on different architectures: for example, if you run a dockcross image on Docker running on an Apple M1, the image will run in emulation mode, meaning that it will still work as expected, although it will be slower than running on native hardware (you can expect a factor or 10 or more).
+Prebuilt images available on Docker hub are single architecture amd64 images. Those images work even on different architectures: for example, if you run a dockcross image on Docker running on an Apple M1, the image will run in emulation mode, meaning that it will still work as expected, although it will be slower than running on native hardware (you can expect a factor or 10 or more).
 
 To overcome this limitation, you can build your own images on non-amd64 architectures. To do so, you can use the `Makefile` provided in this repository. For example, to build the `linux-armv7` image, and provided that your Docker hub organization name is `ACME`, you can run:
 
