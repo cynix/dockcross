@@ -1,11 +1,11 @@
 RUN \
   apt-get update --yes && \
   apt-get install --no-install-recommends --yes \
-    clang-13 \
+    clang-16 \
     jq \
-    libc++-13-dev \
-    lld-13 \
-    llvm-13 \
+    libc++-16-dev \
+    lld-16 \
+    llvm-16 \
     zstd \
     && apt-get clean autoclean --yes \
     && apt-get autoremove --yes \
@@ -34,14 +34,14 @@ RUN \
   && /buildscripts/freebsd-rust.sh \
   && rm -rf /buildscripts
 
-ENV AR=/usr/bin/llvm-ar-13 \
-    AS=/usr/bin/llvm-as-13 \
-    CC=/usr/bin/clang-13 \
+ENV AR=/usr/bin/llvm-ar-16 \
+    AS=/usr/bin/llvm-as-16 \
+    CC=/usr/bin/clang-16 \
     CFLAGS="--target="$FREEBSD_TRIPLE" --sysroot=${FREEBSD_SYSROOT}" \
-    CPP=/usr/bin/clang-cpp-13 \
-    CXX=/usr/bin/clang++-13 \
+    CPP=/usr/bin/clang-cpp-16 \
+    CXX=/usr/bin/clang++-16 \
     CXXFLAGS="--target="$FREEBSD_TRIPLE" --sysroot=${FREEBSD_SYSROOT} -stdlib=libc++" \
-    LD=/usr/bin/clang-13 \
+    LD=/usr/bin/clang-16 \
     LDFLAGS="--target="$FREEBSD_TRIPLE" --sysroot=${FREEBSD_SYSROOT} -fuse-ld=lld" \
     PATH=/usr/local/cargo/bin:/usr/local/go/bin:${PATH}
 

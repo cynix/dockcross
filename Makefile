@@ -300,7 +300,7 @@ $(STANDARD_IMAGES): %: %/Dockerfile base
 
 $(FREEBSD_IMAGES): %: %/Dockerfile
 	mkdir -p $@/imagefiles && cp -r imagefiles $@/
-	$(DOCKER) build -t ghcr.io/cynix/dockcross-$@:latest \
+	$(DOCKER) $(BUILD_CMD) -t ghcr.io/cynix/dockcross-$@:latest \
 		-t ghcr.io/cynix/dockcross-$@:$(TAG) \
 		--build-arg ORG=cynix \
 		--build-arg IMAGE=ghcr.io/cynix/dockcross-$@ \
@@ -342,7 +342,7 @@ $(addsuffix .test,$(STANDARD_IMAGES)): $$(basename $$@)
 	$(BIN)/dockcross-$(basename $@) -i $(ORG)/$(basename $@):latest python3 test/run.py $($@_ARGS)
 
 .SECONDEXPANSION:
-$(addsuffix .test,$(FREEBSD_IMAGES)): $$(basename $$@)
+$(addsuffix .test,$(FREEBSD_IMAGES)):
 	$(DOCKER) run $(RM) ghcr.io/cynix/dockcross-$(basename $@):latest > $(BIN)/dockcross-$(basename $@) \
 		&& chmod +x $(BIN)/dockcross-$(basename $@)
 	$(BIN)/dockcross-$(basename $@) -i ghcr.io/cynix/dockcross-$(basename $@):latest python3 test/run.py $($@_ARGS)

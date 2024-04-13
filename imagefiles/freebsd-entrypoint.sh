@@ -15,7 +15,7 @@ esac
 
 FREEBSD_TRIPLE_ENV=$(echo "${FREEBSD_TRIPLE}" | tr - _)
 
-eval "export CARGO_TARGET_${FREEBSD_TRIPLE_ENV^^}_LINKER=/usr/bin/clang-13"
+eval "export CARGO_TARGET_${FREEBSD_TRIPLE_ENV^^}_LINKER=/usr/bin/clang-16"
 eval "export CARGO_TARGET_${FREEBSD_TRIPLE_ENV^^}_RUSTFLAGS=\"-C link-arg=--target=${FREEBSD_TRIPLE} -C link-arg=--sysroot=${FREEBSD_SYSROOT} -C link-arg=-fuse-ld=lld\""
 eval "export BINDGEN_EXTRA_CLANG_ARGS_${FREEBSD_TRIPLE_ENV}=\"--target=${FREEBSD_TRIPLE} --sysroot=${FREEBSD_SYSROOT}\""
 

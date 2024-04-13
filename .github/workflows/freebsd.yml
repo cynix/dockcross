@@ -49,14 +49,8 @@ jobs:
       fail-fast: false
       matrix:
         arch_name:
-
           - image: freebsd-x64
-            ninja: yes
-            ninja_arg: ""
-
           - image: freebsd-arm64
-            ninja: yes
-            ninja_arg: ""
 
     steps:
       - name: checkout code
@@ -73,19 +67,11 @@ jobs:
       - name: load base
         run: xz -d -k < ./cache/base.tar.xz | docker import - dockcross/base:latest
 
-      - name: build
-        run: make ${{ matrix.arch_name.image }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
-      - name: basic test
-        run: make ${{ matrix.arch_name.image }}.test
-
-      - name: ninja build test
-        if: ${{ matrix.arch_name.ninja == 'yes' }}
-        run: |
-          git clone --depth 1 --branch v1.11.1 https://github.com/ninja-build/ninja.git
-          cd ninja
-          ../bin/dockcross-${{ matrix.arch_name.image }} cmake -B build-ninja -S . -G Ninja ${{ matrix.arch_name.ninja_arg }}
-          ../bin/dockcross-${{ matrix.arch_name.image }} ninja -C build-ninja
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -94,7 +80,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: deploy
-        if: github.ref == 'refs/heads/master'
-        run: |
-            docker image push ghcr.io/${{ github.repository_owner }}/dockcross-${{ matrix.arch_name.image }} --all-tags
+      - name: build
+        env:
+          BUILD_CMD: buildx build --platform linux/amd64,linux/arm64 ${{ github.ref == 'refs/heads/master' && '--push' }}
+        run: make ${{ matrix.arch_name.image }}
