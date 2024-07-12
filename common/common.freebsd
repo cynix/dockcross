@@ -19,7 +19,7 @@ COPY \
   imagefiles/freebsd-rust.sh \
   /buildscripts/
 
-ENV FREEBSD_VERSION=14.0
+ENV FREEBSD_VERSION=14.1
 
 ENV FREEBSD_TRIPLE=${FREEBSD_ARCH}-unknown-freebsd
 ENV FREEBSD_SYSROOT=/usr/local/${FREEBSD_TRIPLE}
