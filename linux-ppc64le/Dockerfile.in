@@ -3,8 +3,8 @@ FROM ${ORG}/base:latest
 
 LABEL maintainer="Matt McCormick matt.mccormick@kitware.com"
 
-# Crosstool-ng version 2022-05-19
-ENV CT_VERSION crosstool-ng-1.25.0
+# Crosstool-ng version 2024-08-04
+ENV CT_VERSION crosstool-ng-1.26.0
 
 ARG QEMU_VERSION=6.0.0
 
@@ -15,7 +15,7 @@ ENV CROSS_TRIPLE powerpc64le-unknown-linux-gnu
 WORKDIR /usr/src
 
 RUN apt-get install -y libglib2.0-dev zlib1g-dev libpixman-1-dev && \
-  curl -L http://wiki.qemu-project.org/download/qemu-${QEMU_VERSION}.tar.bz2 | tar xj && \
+  curl -L https://download.qemu.org/qemu-${QEMU_VERSION}.tar.bz2 | tar xj && \
   cd qemu-${QEMU_VERSION} && \
   ./configure --target-list=ppc64le-linux-user --prefix=/usr && \
   make -j$(nproc) && \
