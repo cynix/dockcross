@@ -11,8 +11,9 @@ RUN \
     && apt-get autoremove --yes \
     && rm -rf /var/lib/{apt,dpkg,cache,log}
 
+COPY imagefiles/freebsd-pkg.sh /usr/local/bin/pkg
+
 COPY \
-  imagefiles/freebsd-vars.sh \
   imagefiles/freebsd-base.sh \
   imagefiles/freebsd-packages.sh \
   imagefiles/freebsd-go.sh \

@@ -4,6 +4,8 @@ FROM dockcross/base:latest
 LABEL maintainer="cynix@cynix.org"
 
 ENV FREEBSD_ARCH=aarch64
+ENV FREEBSD_MACHINE=arm64
+ENV FREEBSD_MACHINE_ARCH=aarch64
 
 ENV RUSTUP_TOOLCHAIN=nightly
 
