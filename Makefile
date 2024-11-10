@@ -52,8 +52,8 @@ GEN_IMAGE_DOCKERFILES = $(addsuffix /Dockerfile,$(GEN_IMAGES))
 NON_STANDARD_IMAGES := manylinux_2_28-x64 manylinux2014-x64 manylinux2014-x86 \
 		      manylinux2014-aarch64 web-wasm web-wasi-threads
 
-FREEBSD_IMAGES = freebsd-x64 freebsd-arm64
-FREEBSD_GEN_IMAGES = freebsd-x64 freebsd-arm64
+FREEBSD_IMAGES = freebsd
+FREEBSD_GEN_IMAGES = freebsd
 FREEBSD_GEN_IMAGE_DOCKERFILES = $(addsuffix /Dockerfile,$(FREEBSD_GEN_IMAGES))
 
 # Docker composite files

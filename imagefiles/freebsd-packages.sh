@@ -3,8 +3,11 @@ set -x
 set -e
 set -o pipefail
 
-REPO=https://pkg.freebsd.org/FreeBSD:"${FREEBSD_VERSION%.*}":"$FREEBSD_MACHINE_ARCH"/quarterly
-PACKAGES="sqlite3"
+for machine in amd64 arm64; do
+  REPO=https://pkg.freebsd.org/FreeBSD:${FREEBSD_VERSION%.*}:${machine/arm64/aarch64}/latest
+  PACKAGES="sqlite3"
 
-curl -sSfL "$REPO"/packagesite.txz | tar -C /usr/local/etc/ -xJf- packagesite.yaml
+  curl -sSfL $REPO/packagesite.txz | tar -C /freebsd/$machine/ -xJf- packagesite.yaml
+done
+
 pkg install $PACKAGES

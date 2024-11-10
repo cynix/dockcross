@@ -20,43 +20,31 @@ COPY \
   imagefiles/freebsd-rust.sh \
   /buildscripts/
 
-ENV FREEBSD_VERSION=14.1
+COPY \
+  imagefiles/freebsd-Toolchain.cmake \
+  /freebsd/
 
-ENV FREEBSD_TRIPLE=${FREEBSD_ARCH}-unknown-freebsd
-ENV FREEBSD_SYSROOT=/usr/local/${FREEBSD_TRIPLE}
-ENV PKG_CONFIG_PATH=${FREEBSD_SYSROOT}/usr/local/libdata/pkgconfig
-ENV PKG_CONFIG_SYSROOT_DIR=${FREEBSD_SYSROOT}
+ENV \
+  FREEBSD_VERSION=14.1 \
+  PATH=/usr/local/cargo/bin:/usr/local/go/bin:${PATH} \
+  AR=/usr/bin/llvm-ar-16 \
+  AS=/usr/bin/llvm-as-16 \
+  CC=/usr/bin/clang-16 \
+  CPP=/usr/bin/clang-cpp-16 \
+  CXX=/usr/bin/clang++-16 \
+  LD=/usr/bin/clang-16 \
+  CMAKE_TOOLCHAIN_FILE=/freebsd/Toolchain.cmake \
+  GOOS=freebsd \
+  CGO_ENABLED=1 \
+  CARGO_HOME=/usr/local/cargo \
+  RUSTUP_HOME=/usr/local/rustup
 
 RUN \
-  mkdir -p ${FREEBSD_SYSROOT} \
-  && /buildscripts/freebsd-base.sh \
+  /buildscripts/freebsd-base.sh \
   && /buildscripts/freebsd-packages.sh \
   && /buildscripts/freebsd-go.sh \
   && /buildscripts/freebsd-rust.sh \
   && rm -rf /buildscripts
-
-ENV AR=/usr/bin/llvm-ar-16 \
-    AS=/usr/bin/llvm-as-16 \
-    CC=/usr/bin/clang-16 \
-    CFLAGS="--target="$FREEBSD_TRIPLE" --sysroot=${FREEBSD_SYSROOT}" \
-    CPP=/usr/bin/clang-cpp-16 \
-    CXX=/usr/bin/clang++-16 \
-    CXXFLAGS="--target="$FREEBSD_TRIPLE" --sysroot=${FREEBSD_SYSROOT} -stdlib=libc++" \
-    LD=/usr/bin/clang-16 \
-    LDFLAGS="--target="$FREEBSD_TRIPLE" --sysroot=${FREEBSD_SYSROOT} -fuse-ld=lld" \
-    PATH=/usr/local/cargo/bin:/usr/local/go/bin:${PATH}
-
-COPY imagefiles/freebsd-Toolchain.cmake ${FREEBSD_SYSROOT}/Toolchain.cmake
-ENV CMAKE_TOOLCHAIN_FILE ${FREEBSD_SYSROOT}/Toolchain.cmake
-
-ENV GOOS=freebsd \
-    CGO_CFLAGS="--target=${FREEBSD_TRIPLE} --sysroot=${FREEBSD_SYSROOT}" \
-    CGO_CXXFLAGS="--target=${FREEBSD_TRIPLE} --sysroot=${FREEBSD_SYSROOT} -stdlib=libc++" \
-    CGO_LDFLAGS="--target=${FREEBSD_TRIPLE} --sysroot=${FREEBSD_SYSROOT} -fuse-ld=lld" \
-    CGO_ENABLED=1
-
-ENV CARGO_HOME=/usr/local/cargo \
-    RUSTUP_HOME=/usr/local/rustup
 
 WORKDIR /work
 
