@@ -25,7 +25,7 @@ COPY \
   /freebsd/
 
 ENV \
-  FREEBSD_VERSION=14.1 \
+  FREEBSD_VERSION=14.2 \
   PATH=/usr/local/cargo/bin:/usr/local/go/bin:${PATH} \
   AR=/usr/bin/llvm-ar-16 \
   AS=/usr/bin/llvm-as-16 \
