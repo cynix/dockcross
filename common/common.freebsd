@@ -44,7 +44,8 @@ RUN \
   && /buildscripts/freebsd-packages.sh \
   && /buildscripts/freebsd-go.sh \
   && /buildscripts/freebsd-rust.sh \
-  && rm -rf /buildscripts
+  && rm -rf /buildscripts \
+  && pkg install sqlite3
 
 WORKDIR /work
 

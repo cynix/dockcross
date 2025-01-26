@@ -38,6 +38,10 @@ if [ -n "$FREEBSD_TARGET" ]; then
   eval "export ${FREEBSD_TRIPLE_ENV^^}_OPENSSL_DIR=\"$FREEBSD_SYSROOT/usr\""
 fi
 
+if [ -n "$FREEBSD_PACKAGES" ]; then
+  pkg install $FREEBSD_PACKAGES
+fi
+
 if [ -n "$BUILDER_UID" ] && [ -n "$BUILDER_GID" ]; then
   chown -R "$BUILDER_UID":"$BUILDER_GID" /usr/local/cargo /usr/local/rustup
 fi

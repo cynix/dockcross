@@ -10,16 +10,12 @@ if [ "$(whoami)" != "root" ]; then
   exec sudo pkg install "$@"
 fi
 
-for machine in amd64 arm64; do
-  REPO=https://pkg.freebsd.org/FreeBSD:${FREEBSD_VERSION%.*}:${machine/arm64/aarch64}/latest
+export LD_LIBRARY_PATH="/freebsd/pkg/lib:$LD_LIBRARY_PATH"
+export OSVERSION=${FREEBSD_VERSION%.*}$(printf '%02d' ${FREEBSD_VERSION#*.})000
 
-  for name in "$@"; do
-    path=$(jq -r '. | select ( .name == "'$name'" ) | .repopath' /freebsd/$machine/packagesite.yaml)
-    if [ -z "$path" ]; then
-      echo "FreeBSD $machine package not found: $name" >&2
-      exit 1
-    fi
-
-    curl -sSfL $REPO/$path | tar -C /freebsd/$machine/ --zstd -xvf- /usr/local/
-  done
+for machine in ${FREEBSD_TARGET:-amd64 arm64}; do
+  machine=${machine/x86_64/amd64}
+  machine=${machine/aarch64/arm64}
+  mkdir -p /freebsd/$machine/var/cache/pkg /freebsd/$machine/var/db/pkg
+  env ABI=FreeBSD:${FREEBSD_VERSION%.*}:${machine/arm64/aarch64} PKG_CACHEDIR=/freebsd/$machine/var/cache/pkg PKG_DBDIR=/freebsd/$machine/var/db/pkg /freebsd/pkg/sbin/pkg --rootdir /freebsd/$machine --config /freebsd/pkg/etc/pkg.conf --repo-conf-dir /freebsd/pkg/etc/pkg/repos install --no-scripts --yes "$@"
 done
