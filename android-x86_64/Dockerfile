@@ -11,8 +11,8 @@ ENV AS=${CROSS_ROOT}/bin/llvm-as \
     CXX=${CROSS_ROOT}/bin/clang++ \
     LD=${CROSS_ROOT}/bin/ld
 
-ENV ANDROID_NDK_REVISION 25b
-ENV ANDROID_API 23
+ENV ANDROID_NDK_REVISION=25b
+ENV ANDROID_API=23
 
 RUN mkdir -p /build && \
     cd /build && \
@@ -29,8 +29,14 @@ RUN mkdir -p /build && \
     find ${CROSS_ROOT} -exec chmod a+r '{}' \; && \
     find ${CROSS_ROOT} -executable -exec chmod a+x '{}' \;
 
+# Prepare Rust
+ENV PATH="/root/.cargo/bin/:$PATH"
+RUN rustup target add x86_64-linux-android
+COPY config.toml /root/.cargo/
+
+# Prepare CMake
 COPY Toolchain.cmake ${CROSS_ROOT}/
-ENV CMAKE_TOOLCHAIN_FILE ${CROSS_ROOT}/Toolchain.cmake
+ENV CMAKE_TOOLCHAIN_FILE=${CROSS_ROOT}/Toolchain.cmake
 
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
@@ -44,4 +50,4 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.vcs-ref=$VCS_REF \
       org.label-schema.vcs-url=$VCS_URL \
       org.label-schema.schema-version="1.0"
-ENV DEFAULT_DOCKCROSS_IMAGE ${IMAGE}:${VERSION}
+ENV DEFAULT_DOCKCROSS_IMAGE=${IMAGE}:${VERSION}

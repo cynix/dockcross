@@ -67,7 +67,7 @@ if [[ -z "${PERL_HASH}" ]]; then
   exit 1
 fi
 
-# Hash from https://www.openssl.org/source/openssl-1.1.1l.tar.gz.sha256
+# Hash from https://www.openssl.org/source/openssl-1.1.1w.tar.gz.sha256
 OPENSSL_DOWNLOAD_URL=http://www.openssl.org/source/
 
 PERL_DOWNLOAD_URL=https://www.cpan.org/src/5.0
@@ -92,7 +92,7 @@ function build_perl {
         -fsSLO ${PERL_DOWNLOAD_URL}/${perl_fname}.tar.gz
 
     check_sha256sum ${perl_fname}.tar.gz ${perl_sha256}
-    tar -xzf ${perl_fname}.tar.gz
+    tar -xzf ${perl_fname}.tar.gz --no-same-owner
     (cd ${perl_fname} && do_perl_build)
     rm -rf ${perl_fname} ${perl_fname}.tar.gz
 }
