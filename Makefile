@@ -8,7 +8,9 @@
 # Common values: docker, podman, buildah
 DOCKER := $(or $(OCI_EXE), docker)
 BUILD_DOCKER := $(or $(BUILD_DOCKER), $(DOCKER))
-BUILDAH := $(or $(BUILDAH_EXE), buildah)
+MANIFEST_TOOL := $(or $(MANIFEST_TOOL_EXE), manifest-tool)
+RM = --rm
+
 # Name of the docker-equivalent executable for running test containers.
 # Supports the use case:
 #
@@ -78,7 +80,7 @@ FREEBSD_GEN_IMAGE_DOCKERFILES = $(addsuffix /Dockerfile,$(FREEBSD_GEN_IMAGES))
 # Docker composite files
 DOCKER_COMPOSITE_SOURCES = common.docker common.debian common.manylinux2014 common.manylinux_2_28 common.manylinux_2_34 common.buildroot \
 	common.crosstool common.webassembly common.windows common-manylinux.crosstool common.dockcross \
-	common.label-and-env
+	common.label-and-env common.freebsd
 DOCKER_COMPOSITE_FOLDER_PATH = common/
 DOCKER_COMPOSITE_PATH = $(addprefix $(DOCKER_COMPOSITE_FOLDER_PATH),$(DOCKER_COMPOSITE_SOURCES))
 
@@ -96,13 +98,6 @@ windows-shared-x64-posix.test_ARGS = --exe-suffix ".exe"
 windows-armv7.test_ARGS = --exe-suffix ".exe"
 windows-arm64.test_ARGS = --exe-suffix ".exe"
 bare-armv7emhf-nano_newlib.test_ARGS = --linker-flags="--specs=nosys.specs"
-
-# On CircleCI, do not attempt to delete container
-# See https://circleci.com/docs/docker-btrfs-error/
-RM = --rm
-ifeq ("$(CIRCLECI)", "true")
-	RM =
-endif
 
 # Tag images with date and Git short hash in addition to revision
 TAG := $(shell date '+%Y%m%d')-$(shell git rev-parse --short HEAD)
@@ -126,31 +121,8 @@ test: base.test $(addsuffix .test,$(IMAGES))
 #
 # Generic Targets (can specialize later).
 #
-
-$(GEN_IMAGE_DOCKERFILES) Dockerfile: %Dockerfile: %Dockerfile.in $(DOCKER_COMPOSITE_PATH)
-	sed \
-		-e '/common.docker/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.docker' \
-		-e '/common.debian/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.debian' \
-		-e '/common.manylinux_2_28/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.manylinux_2_28' \
-		-e '/common.manylinux_2_34/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.manylinux_2_34' \
-		-e '/common.manylinux2014/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.manylinux2014' \
-		-e '/common.crosstool/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.crosstool' \
-		-e '/common.buildroot/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.buildroot' \
-		-e '/common-manylinux.crosstool/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common-manylinux.crosstool' \
-		-e '/common.webassembly/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.webassembly' \
-		-e '/common.windows/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.windows' \
-		-e '/common.dockcross/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.dockcross' \
-		-e '/common.label-and-env/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.label-and-env' \
-		$< > $@
-
-$(FREEBSD_GEN_IMAGE_DOCKERFILES): %Dockerfile: %Dockerfile.in $(DOCKER_COMPOSITE_PATH)
-	sed \
-		-e '/common.docker/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.docker' \
-		-e '/common.debian/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.debian' \
-		-e '/common.dockcross/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.dockcross' \
-		-e '/common.freebsd/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.freebsd' \
-		-e '/common.label-and-env/ r $(DOCKER_COMPOSITE_FOLDER_PATH)common.label-and-env' \
-		$< > $@
+$(GEN_IMAGE_DOCKERFILES) $(FREEBSD_GEN_IMAGE_DOCKERFILES) Dockerfile: %Dockerfile: %Dockerfile.in $(DOCKER_COMPOSITE_PATH)
+	sed $(foreach f,$(DOCKER_COMPOSITE_SOURCES),-e '/$(f)/ r $(DOCKER_COMPOSITE_FOLDER_PATH)$(f)') $< > $@
 
 #
 # web-wasm
@@ -367,7 +339,7 @@ $(MULTIARCH_IMAGES): %: %/Dockerfile base-$(HOST_ARCH)
 
 $(FREEBSD_IMAGES): %: %/Dockerfile
 	mkdir -p $@/imagefiles && cp -r imagefiles $@/
-	$(BUILD_DOCKER) $(BUILD_CMD) $(TAG_FLAG) ghcr.io/cynix/dockcross-$@:latest \
+	$(BUILD_DOCKER) $(BUILD_CMD) $(TAG_FLAG) ghcr.io/cynix/dockcross-$@:latest-$(HOST_ARCH) \
 		$(TAG_FLAG) ghcr.io/cynix/dockcross-$@:$(TAG) \
 		--build-arg ORG=cynix \
 		--build-arg IMAGE=ghcr.io/cynix/dockcross-$@ \
@@ -432,22 +404,48 @@ $(addsuffix .push,$(STANDARD_IMAGES) $(NON_STANDARD_IMAGES)): $$(basename $$@)
 
 .SECONDEXPANSION:
 $(addsuffix .manifest,$(MULTIARCH_IMAGES) web-wasi-threads web-wasm): $$(basename $$@)
-	if $(BUILDAH) manifest exists $(ORG)/$(basename $@); then \
-		$(BUILDAH) manifest rm $(ORG)/$(basename $@); fi
-	$(BUILDAH) manifest create $(ORG)/$(basename $@)
-	$(BUILDAH) manifest add $(ORG)/$(basename $@) docker://$(ORG)/$(basename $@):latest-amd64
-	$(BUILDAH) manifest add $(ORG)/$(basename $@) docker://$(ORG)/$(basename $@):latest-arm64
+	$(MANIFEST_TOOL) push from-args \
+		--platforms linux/amd64,linux/arm64 \
+		--template $(ORG)/$(basename $@):latest-ARCH \
+		--target $(ORG)/$(basename $@):latest
 
 .SECONDEXPANSION:
 $(addsuffix .push,$(MULTIARCH_IMAGES) web-wasi-threads web-wasm): $$(basename $$@).manifest
-	$(BUILDAH) manifest push --all --format v2s2 $(ORG)/$(basename $@) docker://$(ORG)/$(basename $@):latest
-	$(BUILDAH) manifest push --all --format v2s2 $(ORG)/$(basename $@) docker://$(ORG)/$(basename $@):$(TAG)
+	$(MANIFEST_TOOL) push from-args \
+		--platforms linux/amd64,linux/arm64 \
+		--template $(ORG)/$(basename $@):$(TAG)-ARCH \
+		--target $(ORG)/$(basename $@):$(TAG)
 
 .SECONDEXPANSION:
 $(addsuffix .test,$(FREEBSD_IMAGES)):
-	$(TEST_DOCKER) run $(RM) ghcr.io/cynix/dockcross-$(basename $@):latest > $(BIN)/dockcross-$(basename $@) \
+	$(TEST_DOCKER) run $(RM) ghcr.io/cynix/dockcross-$(basename $@):latest-$(HOST_ARCH) > $(BIN)/dockcross-$(basename $@) \
 		&& chmod +x $(BIN)/dockcross-$(basename $@)
-	$(BIN)/dockcross-$(basename $@) -i ghcr.io/cynix/dockcross-$(basename $@):latest python3 test/run.py $($@_ARGS)
+	$(BIN)/dockcross-$(basename $@) -i ghcr.io/cynix/dockcross-$(basename $@):latest-$(HOST_ARCH) -a "-e FREEBSD_TARGET=amd64" -- python3 test/run.py $($@_ARGS)
+	$(BIN)/dockcross-$(basename $@) -i ghcr.io/cynix/dockcross-$(basename $@):latest-$(HOST_ARCH) -a "-e FREEBSD_TARGET=arm64" -- python3 test/run.py $($@_ARGS)
+
+.SECONDEXPANSION:
+$(addsuffix .tag-$(HOST_ARCH),$(FREEBSD_IMAGES)):
+	$(BUILD_DOCKER) tag ghcr.io/cynix/dockcross-$(basename $@):latest-$(HOST_ARCH) \
+		 ghcr.io/cynix/dockcross-$(basename $@):$(TAG)-$(HOST_ARCH)
+
+.SECONDEXPANSION:
+$(addsuffix .push-$(HOST_ARCH),$(FREEBSD_IMAGES)):
+	$(BUILD_DOCKER) push ghcr.io/cynix/dockcross-$(basename $@):latest-$(HOST_ARCH) \
+		&& $(BUILD_DOCKER) push ghcr.io/cynix/dockcross-$(basename $@):$(TAG)-$(HOST_ARCH)
+
+.SECONDEXPANSION:
+$(addsuffix .manifest,$(FREEBSD_IMAGES)):
+	$(MANIFEST_TOOL) push from-args \
+		--platforms linux/amd64,linux/arm64 \
+		--template ghcr.io/cynix/dockcross-$(basename $@):latest-ARCH \
+		--target ghcr.io/cynix/dockcross-$(basename $@):latest
+
+.SECONDEXPANSION:
+$(addsuffix .push,$(FREEBSD_IMAGES)): $$(basename $$@).manifest
+	$(MANIFEST_TOOL) push from-args \
+		--platforms linux/amd64,linux/arm64 \
+		--template ghcr.io/cynix/dockcross-$(basename $@):$(TAG)-ARCH \
+		--target ghcr.io/cynix/dockcross-$(basename $@):$(TAG)
 
 #
 # testing prerequisites implicit rule

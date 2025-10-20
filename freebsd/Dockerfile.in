@@ -1,5 +1,6 @@
 ARG ORG=cynix
-FROM dockcross/base:latest
+ARG HOST_ARCH=amd64
+FROM dockcross/base:latest-${HOST_ARCH}
 
 LABEL maintainer="cynix@cynix.org"
 

@@ -32,7 +32,7 @@ if [ -n "$FREEBSD_TARGET" ]; then
 
   export CARGO_BUILD_TARGET="$FREEBSD_TRIPLE"
   FREEBSD_TRIPLE_ENV=$(echo "$FREEBSD_TRIPLE" | tr - _)
-  eval "export CARGO_TARGET_${FREEBSD_TRIPLE_ENV^^}_LINKER=/usr/bin/clang-16"
+  eval "export CARGO_TARGET_${FREEBSD_TRIPLE_ENV^^}_LINKER=/usr/bin/clang-19"
   eval "export CARGO_TARGET_${FREEBSD_TRIPLE_ENV^^}_RUSTFLAGS=\"-C link-arg=--target=$FREEBSD_TRIPLE -C link-arg=--sysroot=$FREEBSD_SYSROOT -C link-arg=-fuse-ld=lld\""
   eval "export BINDGEN_EXTRA_CLANG_ARGS_$FREEBSD_TRIPLE_ENV=\"--target=$FREEBSD_TRIPLE --sysroot=$FREEBSD_SYSROOT\""
   eval "export ${FREEBSD_TRIPLE_ENV^^}_OPENSSL_DIR=\"$FREEBSD_SYSROOT/usr\""
@@ -40,10 +40,6 @@ fi
 
 if [ -n "$FREEBSD_PACKAGES" ]; then
   pkg install $FREEBSD_PACKAGES
-fi
-
-if [ -n "$BUILDER_UID" ] && [ -n "$BUILDER_GID" ]; then
-  chown -R "$BUILDER_UID":"$BUILDER_GID" /usr/local/cargo /usr/local/rustup
 fi
 
 exec /dockcross/entrypoint.sh "$@"
