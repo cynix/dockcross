@@ -37,23 +37,23 @@ ENV \
   GOOS=freebsd \
   CGO_ENABLED=1 \
   CFLAGS_x86_64_unknown_freebsd="--target=x86_64-unknown-freebsd --sysroot=/freebsd/amd64" \
-  CFLAGS_aarch64_unknown_freebsd="--target=aarch64-unknown-freebsd --sysroot=/freebsd/arm64" \
+  CFLAGS_aarch64_unknown_freebsd="--target=aarch64-unknown-freebsd --sysroot=/freebsd/aarch64" \
   CXXFLAGS_x86_64_unknown_freebsd="--target=x86_64-unknown-freebsd --sysroot=/freebsd/amd64 -stdlib=libc++" \
-  CXXFLAGS_aarch64_unknown_freebsd="--target=aarch64-unknown-freebsd --sysroot=/freebsd/arm64 -stdlib=libc++" \
+  CXXFLAGS_aarch64_unknown_freebsd="--target=aarch64-unknown-freebsd --sysroot=/freebsd/aarch64 -stdlib=libc++" \
   LDFLAGS_x86_64_unknown_freebsd="--target=x86_64-unknown-freebsd --sysroot=/freebsd/amd64 -fuse-ld=lld" \
-  LDFLAGS_aarch64_unknown_freebsd="--target=aarch64-unknown-freebsd --sysroot=/freebsd/arm64 -fuse-ld=lld" \
+  LDFLAGS_aarch64_unknown_freebsd="--target=aarch64-unknown-freebsd --sysroot=/freebsd/aarch64 -fuse-ld=lld" \
   CARGO_TARGET_X86_64_UNKNOWN_FREEBSD_LINKER=/usr/bin/clang-19 \
   CARGO_TARGET_AARCH64_UNKNOWN_FREEBSD_LINKER=/usr/bin/clang-19 \
   CARGO_TARGET_X86_64_UNKNOWN_FREEBSD_RUSTFLAGS="-C link-arg=--target=x86_64-unknown-freebsd -C link-arg=--sysroot=/freebsd/amd64 -C link-arg=-fuse-ld=lld" \
-  CARGO_TARGET_AARCH64_UNKNOWN_FREEBSD_RUSTFLAGS="-C link-arg=--target=aarch64-unknown-freebsd -C link-arg=--sysroot=/freebsd/arm64 -C link-arg=-fuse-ld=lld" \
+  CARGO_TARGET_AARCH64_UNKNOWN_FREEBSD_RUSTFLAGS="-C link-arg=--target=aarch64-unknown-freebsd -C link-arg=--sysroot=/freebsd/aarch64 -C link-arg=-fuse-ld=lld" \
   BINDGEN_EXTRA_CLANG_ARGS_x86_64_unknown_freebsd="--target=x86_64-unknown-freebsd --sysroot=/freebsd/amd64" \
-  BINDGEN_EXTRA_CLANG_ARGS_aarch64_unknown_freebsd="--target=aarch64-unknown-freebsd --sysroot=/freebsd/arm64" \
+  BINDGEN_EXTRA_CLANG_ARGS_aarch64_unknown_freebsd="--target=aarch64-unknown-freebsd --sysroot=/freebsd/aarch64" \
   X86_64_UNKNOWN_FREEBSD_OPENSSL_DIR=/freebsd/amd64/usr \
-  AARCH64_UNKNOWN_FREEBSD_OPENSSL_DIR=/freebsd/arm64/usr \
+  AARCH64_UNKNOWN_FREEBSD_OPENSSL_DIR=/freebsd/aarch64/usr \
   PKG_CONFIG_LIBDIR_x86_64_unknown_freebsd=/freebsd/amd64/usr/libdata/pkgconfig:/freebsd/amd64/usr/local/libdata/pkgconfig \
-  PKG_CONFIG_LIBDIR_aarch64_unknown_freebsd=/freebsd/arm64/usr/libdata/pkgconfig:/freebsd/arm64/usr/local/libdata/pkgconfig \
+  PKG_CONFIG_LIBDIR_aarch64_unknown_freebsd=/freebsd/aarch64/usr/libdata/pkgconfig:/freebsd/aarch64/usr/local/libdata/pkgconfig \
   PKG_CONFIG_SYSROOT_DIR_x86_64_unknown_freebsd=/freebsd/amd64 \
-  PKG_CONFIG_SYSROOT_DIR_aarch64_unknown_freebsd=/freebsd/arm64 \
+  PKG_CONFIG_SYSROOT_DIR_aarch64_unknown_freebsd=/freebsd/aarch64 \
   PKG_CONFIG_PATH=""
 
 RUN \

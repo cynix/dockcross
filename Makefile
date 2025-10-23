@@ -420,8 +420,8 @@ $(addsuffix .push,$(MULTIARCH_IMAGES) web-wasi-threads web-wasm): $$(basename $$
 $(addsuffix .test,$(FREEBSD_IMAGES)):
 	$(TEST_DOCKER) run $(RM) ghcr.io/cynix/dockcross-$(basename $@):latest-$(HOST_ARCH) > $(BIN)/dockcross-$(basename $@) \
 		&& chmod +x $(BIN)/dockcross-$(basename $@)
-	$(BIN)/dockcross-$(basename $@) -i ghcr.io/cynix/dockcross-$(basename $@):latest-$(HOST_ARCH) -a "-e FREEBSD_TARGET=amd64" -- python3 test/run.py $($@_ARGS)
-	$(BIN)/dockcross-$(basename $@) -i ghcr.io/cynix/dockcross-$(basename $@):latest-$(HOST_ARCH) -a "-e FREEBSD_TARGET=arm64" -- python3 test/run.py $($@_ARGS)
+	$(BIN)/dockcross-$(basename $@) -i ghcr.io/cynix/dockcross-$(basename $@):latest-$(HOST_ARCH) -a "-e FREEBSD_ARCH=amd64" -- python3 test/run.py $($@_ARGS)
+	$(BIN)/dockcross-$(basename $@) -i ghcr.io/cynix/dockcross-$(basename $@):latest-$(HOST_ARCH) -a "-e FREEBSD_ARCH=arm64" -- python3 test/run.py $($@_ARGS)
 
 .SECONDEXPANSION:
 $(addsuffix .tag-$(HOST_ARCH),$(FREEBSD_IMAGES)):

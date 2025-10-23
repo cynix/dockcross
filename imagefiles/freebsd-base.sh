@@ -44,6 +44,6 @@ EOF
 cd /freebsd
 rm -rf /freebsd/work
 
-for arch in amd64 arm64; do
-  env FREEBSD_TARGET=$arch pkg install FreeBSD-mtree FreeBSD-runtime FreeBSD-zoneinfo $(env FREEBSD_TARGET=$arch pkg search --repo FreeBSD-base --quiet --glob 'FreeBSD-*lib*' | egrep -v -- '-(dbg|lib32|man)-') $(env FREEBSD_TARGET=$arch pkg search --repo FreeBSD-base --quiet --glob 'FreeBSD-*-dev-*' | egrep -v -- '-(dbg|lib32|man)-')
+for arch in amd64 aarch64; do
+  env FREEBSD_ARCH=$arch pkg install FreeBSD-mtree FreeBSD-runtime FreeBSD-zoneinfo $(env FREEBSD_ARCH=$arch pkg search --repo FreeBSD-base --quiet --glob 'FreeBSD-*lib*' | egrep -v -- '-(dbg|lib32|man)-') $(env FREEBSD_ARCH=$arch pkg search --repo FreeBSD-base --quiet --glob 'FreeBSD-*-dev-*' | egrep -v -- '-(dbg|lib32|man)-')
 done

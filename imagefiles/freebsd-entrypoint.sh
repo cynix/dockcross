@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
 
-if [ -n "$FREEBSD_TARGET" ]; then
-  case "$FREEBSD_TARGET" in
+if [ -n "$FREEBSD_ARCH" ]; then
+  case "$FREEBSD_ARCH" in
     amd64|x86_64)
+      export FREEBSD_ARCH=amd64
       export FREEBSD_SYSROOT=/freebsd/amd64
       export FREEBSD_TRIPLE=x86_64-unknown-freebsd
       export RUSTUP_TOOLCHAIN=stable
       ;;
     arm64|aarch64)
-      export FREEBSD_SYSROOT=/freebsd/arm64
+      export FREEBSD_ARCH=aarch64
+      export FREEBSD_SYSROOT=/freebsd/aarch64
       export FREEBSD_TRIPLE=aarch64-unknown-freebsd
       export RUSTUP_TOOLCHAIN=nightly
       ;;
     *)
-      echo "Unsupported arch: $FREEBSD_TARGET"
+      echo "Unsupported arch: $FREEBSD_ARCH"
       exit 1
       ;;
   esac
