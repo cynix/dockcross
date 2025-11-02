@@ -10,4 +10,5 @@ for toolchain in stable nightly; do
   rustup target add --toolchain $toolchain x86_64-unknown-freebsd
 done
 
-mkdir -m777 /opt/rustup/cargo/git /opt/rustup/cargo/registry
+cargo install bindgen-cli
+find /opt/rustup \( -type d -o -type f \) -exec chmod go+w '{}' +
