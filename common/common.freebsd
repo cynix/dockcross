@@ -25,7 +25,7 @@ COPY \
   /freebsd/Toolchain.cmake
 
 ENV \
-  FREEBSD_VERSION=14.3 \
+  FREEBSD_VERSION=15.0 \
   PATH=/usr/local/go/bin:${PATH} \
   AR=/usr/bin/llvm-ar-19 \
   AS=/usr/bin/llvm-as-19 \
