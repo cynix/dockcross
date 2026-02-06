@@ -39,7 +39,7 @@ fingerprint: "56a77bdcb6c3cf7984729c6138bd5617c24aa0d466b3b604c96205b2c5629f3c"
 EOF
 
 apt-get install -y build-essential libacl1-dev libarchive-dev libarchive-tools libattr1-dev libbsd-dev libbz2-dev liblua5.2-dev liblzma-dev liblzo2-dev libsqlite3-dev libssl-dev m4 pkg-config python3 zlib1g-dev
-git clone --branch=2.3.1 --depth=1 https://github.com/freebsd/pkg.git /freebsd/work/pkg
+git clone --branch=2.5.1 --depth=1 https://github.com/freebsd/pkg.git /freebsd/work/pkg
 
 cd /freebsd/work/build
 ../pkg/configure --prefix=/freebsd/pkg
