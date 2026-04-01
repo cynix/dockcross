@@ -3,10 +3,10 @@
 # AUTHOR: odidev
 # DATE: 2021-07-20
 # DESCRIPTION: This file intended to cross compile the python and create necessary
-#              crossenv enrironment
+#              crossenv environment
 
 # The current env is not compatible to build python so resetting it as
-# in quay.io/pypa/manylinux2014_x86_64 containers
+# in quay.io/pypa/manylinux_2_34_x86_64 containers
 unset $(env | awk -F= '{print $1}')
 export SSL_CERT_FILE=/opt/_internal/certs.pem
 export TERM=xterm
