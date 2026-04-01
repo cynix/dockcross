@@ -212,7 +212,7 @@ manylinux_2_34-aarch64: manylinux_2_34-aarch64/Dockerfile manylinux_2_34-x64
 	@# Register qemu
 	docker run --rm --privileged hypriot/qemu-register
 	@# Get libstdc++ from quay.io/pypa/manylinux_2_34_aarch64 container
-	docker run -v `pwd`:/host --rm -e LIB_PATH=/host/$@/xc_script/ quay.io/pypa/manylinux_2_34_aarch64 bash -c "PASS=1 /host/$@/xc_script/docker_setup_scrpits/copy_libstd.sh"
+	docker run -v `pwd`:/host --rm -e LIB_PATH=/host/$@/xc_script/ quay.io/pypa/manylinux_2_34_aarch64 bash -c "PASS=1 /host/$@/xc_script/docker_setup_scripts/copy_libstd.sh"
 	mkdir -p $@/imagefiles && cp -r imagefiles $@/
 	$(BUILD_DOCKER) $(BUILD_CMD) $(TAG_FLAG) $(ORG)/manylinux_2_34-aarch64:$(TAG) \
 		$(TAG_FLAG) $(ORG)/manylinux_2_34-aarch64:latest \
