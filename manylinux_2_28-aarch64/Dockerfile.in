@@ -27,9 +27,8 @@ ENV CROSS_TRIPLE=aarch64-unknown-linux-gnu
 ENV CROSS_ROOT=${XCC_PREFIX}/${CROSS_TRIPLE}
 ENV PATH=${PATH}:${CROSS_ROOT}/bin
 
-# Running scripts to cross compile python and copy libstdc++ into toolchain
+# Running scripts to cross compile python
 ADD manylinux_2_28-aarch64/xc_script /tmp/
-RUN PASS=2 /tmp/docker_setup_scripts/copy_libstd.sh
 RUN /tmp/docker_setup_scripts/prepare_cross_env.sh
 RUN rm -rf /tmp/docker_setup_scripts
 RUN rm -rf /tmp/usr/
