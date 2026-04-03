@@ -35,7 +35,7 @@ jobs:
           docker export dockcross/base:latest | xz -e9 -T0 > ./cache/base.tar.xz
 
       - name: save base
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: cache
           path: ./cache
@@ -43,7 +43,7 @@ jobs:
 
       - name: Login to Docker Hub
         if: github.ref == 'refs/heads/master'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
@@ -86,7 +86,7 @@ jobs:
           docker export dockcross/base:latest-${{ env.HOST_ARCH }} | xz -e9 -T0 > ./cache/base-multiarch.tar.xz
 
       - name: save base
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: cache-${{ matrix.os }}
           path: ./cache
@@ -94,7 +94,7 @@ jobs:
 
       - name: Login to Docker Hub
         if: github.ref == 'refs/heads/master'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
@@ -1232,7 +1232,7 @@ jobs:
               llama_cpp_arg: "",
               fmt: "no",
               fmt_arg: "",
-              raylib: "yes",
+              raylib: "no",
               raylib_arg: "-DPLATFORM=Web",
               cpython: "no",
               cpython_arg: "",
@@ -1381,7 +1381,7 @@ jobs:
         run: |
           git clone --depth 1 --branch OpenSSL_1_1_1w https://github.com/openssl/openssl.git
           cd openssl
-          wget https://raw.githubusercontent.com/mavlink/MAVSDK/main/third_party/openssl/dockcross-android.patch
+          wget https://raw.githubusercontent.com/mavlink/MAVSDK/17ad598f0e004d225f5e939aa2947a95791f2f9b/cpp/third_party/openssl/dockcross-android.patch
           patch -p 0 < dockcross-android.patch
           ./../tools/dockcross-command.sh ${{ matrix.arch_name.image }} ./Configure ${{ matrix.arch_name.openssl_arg }}
           ./../tools/dockcross-make-builder.sh ${{ matrix.arch_name.image }} -j${nproc}
@@ -1489,7 +1489,7 @@ jobs:
           docker export dockcross/${{ matrix.arch_name.image }}:latest-${{ env.HOST_ARCH }} | xz -e9 -T0 > ./cache-${{ matrix.arch_name.image }}-${{ env.HOST_ARCH }}/${{ matrix.arch_name.image }}-${{ env.HOST_ARCH }}.tar.xz
 
       - name: save ${{ matrix.arch_name.image }}-${{ matrix.os }}
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: matrix.arch_name.multiarch == 'yes'
         with:
           name: cache-${{ matrix.arch_name.image }}-${{ env.HOST_ARCH }}
@@ -1498,7 +1498,7 @@ jobs:
 
       - name: Login to Docker Hub
         if: github.ref == 'refs/heads/master' && matrix.arch_name.multiarch != 'yes' && env.HOST_ARCH == 'amd64'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
@@ -1542,7 +1542,7 @@ jobs:
 
       - name: Login to Docker Hub
         if: github.ref == 'refs/heads/master'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
