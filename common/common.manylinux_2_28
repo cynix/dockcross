@@ -10,6 +10,7 @@ RUN \
     wget \
     nasm \
     zip \
+    perl-IPC-Cmd \
   && \
   yum clean all
 
