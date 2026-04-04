@@ -52,6 +52,13 @@ COPY \
   manylinux_2_34-aarch64/crosstool-ng.config \
   /dockcross/
 
+# Copy sys/sdt.h to a clean include directory to avoid pulling in all of
+# /usr/include (which causes __float128 conflicts on AlmaLinux 9 when
+# cross-compiling for aarch64).
+RUN mkdir -p /opt/ct-ng-includes/sys && \
+  cp /usr/include/sys/sdt.h /opt/ct-ng-includes/sys/ && \
+  cp /usr/include/sys/sdt-config.h /opt/ct-ng-includes/sys/
+
 # Build and install the toolchain, cleaning up artifacts afterwards.
 RUN \
   mkdir /dockcross/crosstool && \
