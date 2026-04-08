@@ -10,6 +10,8 @@ RUN \
     wget \
     nasm \
     zip \
+    perl-IPC-Cmd \
+    perl-Time-Piece \
   && \
   yum clean all
 
