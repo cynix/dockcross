@@ -74,8 +74,8 @@ NON_STANDARD_IMAGES := manylinux_2_28-x64 manylinux_2_34-x64 manylinux2014-x64 m
 		      manylinux2014-aarch64 manylinux_2_28-aarch64 manylinux_2_34-aarch64 web-wasm web-wasi-emulated-threads web-wasi-threads
 
 # Docker composite files
-DOCKER_COMPOSITE_SOURCES = common.docker common.debian common.manylinux2014 common.manylinux_2_28 common.buildroot \
-	common.crosstool common.webassembly common.windows common-manylinux.crosstool common-manylinux_2_28.crosstool common.dockcross \
+DOCKER_COMPOSITE_SOURCES = common.docker common.debian common.manylinux2014 common.manylinux_2_28 common.manylinux_2_34 common.buildroot \
+	common.crosstool common.webassembly common.windows common-manylinux.crosstool common-manylinux_2_28.crosstool common-manylinux_2_34.crosstool common.dockcross \
 	common.label-and-env
 DOCKER_COMPOSITE_FOLDER_PATH = common/
 DOCKER_COMPOSITE_PATH = $(addprefix $(DOCKER_COMPOSITE_FOLDER_PATH),$(DOCKER_COMPOSITE_SOURCES))
