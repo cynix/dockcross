@@ -10,6 +10,11 @@ RUN \
     wget \
     nasm \
     zip \
+    perl-FindBin \
+    perl-File-Compare \
+    perl-File-Copy \
+    perl-IPC-Cmd \
+    perl-Time-Piece \
   && \
   yum clean all
 

@@ -33,8 +33,8 @@ tar xvzf "${GIT_ROOT}.tar.gz" --no-same-owner
 
 pushd "${GIT_ROOT}"
 ./configure --prefix=/usr/local --with-curl
-make -j"$(nproc)"
-make install
+make -j"$(nproc)" NO_GETTEXT=YesPlease
+make NO_GETTEXT=YesPlease install
 popd
 rm -rf "${GIT_ROOT}" "${GIT_ROOT}.tar.gz"
 
