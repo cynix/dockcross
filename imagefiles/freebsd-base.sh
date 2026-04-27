@@ -8,19 +8,19 @@ FREEBSD_VERSION_MINOR=${FREEBSD_VERSION#*.}
 
 mkdir -p /freebsd/work/build /freebsd/pkg/etc/pkg/repos /freebsd/pkg/keys/pkg/trusted /freebsd/pkg/keys/pkgbase-${FREEBSD_VERSION_MAJOR}/trusted
 
-cat > /freebsd/pkg/etc/pkg/repos/FreeBSD.conf <<EOF
+cat > /freebsd/pkg/etc/pkg/repos/FreeBSD.conf <<'EOF'
 FreeBSD-ports: {
-  url: "pkg+http://pkg.FreeBSD.org/\${ABI}/latest",
+  url: "pkg+http://pkg.FreeBSD.org/${ABI}/latest",
   mirror_type: "srv",
   signature_type: "fingerprints",
   fingerprints: "../pkg/keys/pkg",
   enabled: yes
 }
 FreeBSD-base: {
-  url: "pkg+http://pkg.FreeBSD.org/\${ABI}/base_release_${FREEBSD_VERSION_MINOR}",
+  url: "pkg+http://pkg.FreeBSD.org/${ABI}/base_release_${VERSION_MINOR}",
   mirror_type: "srv",
   signature_type: "fingerprints",
-  fingerprints: "../pkg/keys/pkgbase-${FREEBSD_VERSION_MAJOR}",
+  fingerprints: "../pkg/keys/pkgbase-${VERSION_MAJOR}",
   enabled: yes
 }
 EOF
@@ -42,7 +42,7 @@ apt-get install -y build-essential libacl1-dev libarchive-dev libarchive-tools l
 git clone --branch=2.6.2 --depth=1 https://github.com/freebsd/pkg.git /freebsd/work/pkg
 
 cd /freebsd/work/build
-../pkg/configure --prefix=/freebsd/pkg
+../pkg/configure --prefix=/freebsd/pkg --default-format=txz --with-libarchive.pc --with-libcurl --with-openssl.pc
 make -j4
 make install
 
