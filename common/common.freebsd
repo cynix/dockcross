@@ -18,6 +18,7 @@ COPY \
   imagefiles/freebsd-go.sh \
   imagefiles/freebsd-rust.sh \
   imagefiles/freebsd-uv.sh \
+  imagefiles/freebsd-zig.sh \
   /buildscripts/
 
 COPY \
@@ -65,6 +66,7 @@ RUN \
   && /buildscripts/freebsd-go.sh \
   && /buildscripts/freebsd-rust.sh \
   && /buildscripts/freebsd-uv.sh \
+  && /buildscripts/freebsd-zig.sh \
   && rm -rf /buildscripts
 
 RUN pkg install sqlite3

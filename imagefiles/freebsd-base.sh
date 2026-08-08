@@ -40,14 +40,14 @@ EOF
 
 apt-get install -y build-essential libacl1-dev libarchive-dev libarchive-tools libattr1-dev libbsd-dev libbz2-dev libldns-dev liblua5.2-dev liblzma-dev liblzo2-dev libsqlite3-dev libssl-dev m4 pkg-config python3 zlib1g-dev
 mv "/usr/lib/$(uname -m)-linux-gnu/pkgconfig/ldns.pc" "/usr/lib/$(uname -m)-linux-gnu/pkgconfig/libldns.pc"
-git clone --branch=2.7.5 --depth=1 https://github.com/freebsd/pkg.git /freebsd/work/pkg
+git clone --branch=2.8.1 --depth=1 https://github.com/freebsd/pkg.git /freebsd/work/pkg
 
 cd /freebsd/work/build
 ../pkg/configure --prefix=/freebsd/pkg --default-format=txz --with-libarchive.pc --with-ldns --with-openssl.pc
 make -j4
 make install
 
-mv /freebsd/pkg/etc/pkg.conf.sample /freebsd/pkg/etc/pkg.conf
+cp ../pkg/src/pkg.conf.sample /freebsd/pkg/etc/pkg.conf
 cat >> /freebsd/pkg/etc/pkg.conf <<'EOF'
 ASSUME_ALWAYS_YES = true;
 RUN_SCRIPTS = false;
