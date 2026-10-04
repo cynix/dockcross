@@ -3,8 +3,10 @@ set -x
 set -e
 set -o pipefail
 
+GO_VERSION=1.27.1
+
 mkdir -p /usr/local
-curl -sSfL https://go.dev/dl/go1.26.5.linux-$(test "$(uname -m)" = "x86_64" && echo amd64 || echo arm64).tar.gz | tar -C /usr/local/ -xzf-
+curl -sSfL https://go.dev/dl/go$GO_VERSION.linux-$(test "$(uname -m)" = "x86_64" && echo amd64 || echo arm64).tar.gz | tar -C /usr/local/ -xzf-
 
 echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' > /etc/apt/sources.list.d/goreleaser.list
 apt-get update --yes \

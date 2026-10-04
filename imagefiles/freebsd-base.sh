@@ -5,6 +5,7 @@ set -o pipefail
 
 FREEBSD_VERSION_MAJOR=${FREEBSD_VERSION%.*}
 FREEBSD_VERSION_MINOR=${FREEBSD_VERSION#*.}
+PKG_VERSION=2.8.2
 
 mkdir -p /freebsd/work/build /freebsd/pkg/etc/pkg/repos /freebsd/pkg/keys/pkg/trusted /freebsd/pkg/keys/pkgbase-${FREEBSD_VERSION_MAJOR}/trusted
 
@@ -40,7 +41,7 @@ EOF
 
 apt-get install -y build-essential libacl1-dev libarchive-dev libarchive-tools libattr1-dev libbsd-dev libbz2-dev libldns-dev liblua5.2-dev liblzma-dev liblzo2-dev libsqlite3-dev libssl-dev m4 pkg-config python3 zlib1g-dev
 mv "/usr/lib/$(uname -m)-linux-gnu/pkgconfig/ldns.pc" "/usr/lib/$(uname -m)-linux-gnu/pkgconfig/libldns.pc"
-git clone --branch=2.8.1 --depth=1 https://github.com/freebsd/pkg.git /freebsd/work/pkg
+git clone --branch=$PKG_VERSION --depth=1 https://github.com/freebsd/pkg.git /freebsd/work/pkg
 
 cd /freebsd/work/build
 ../pkg/configure --prefix=/freebsd/pkg --default-format=txz --with-libarchive.pc --with-ldns --with-openssl.pc
