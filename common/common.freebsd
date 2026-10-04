@@ -2,23 +2,28 @@ RUN \
   apt-get update --yes && \
   apt-get install --no-install-recommends --yes \
     clang-19 \
+    extrepo \
     jq \
     libc++-19-dev \
     lld-19 \
     llvm-19 \
     zstd \
+    && extrepo enable mise \
+    && apt-get update --yes \
+    && apt-get install --no-install-recommends --yes mise \
     && apt-get clean autoclean --yes \
     && apt-get autoremove --yes \
-    && rm -rf /var/lib/{apt,dpkg,cache,log}
+    && rm -rf /var/lib/{apt,dpkg,cache,log} \
+    && rm -rf /opt/rustup \
+    && mkdir -p /opt/rustup \
+    && chmod 777 /opt/rustup
 
 COPY imagefiles/freebsd-pkg.sh /usr/local/bin/pkg
 
 COPY \
   imagefiles/freebsd-base.sh \
   imagefiles/freebsd-go.sh \
-  imagefiles/freebsd-rust.sh \
   imagefiles/freebsd-uv.sh \
-  imagefiles/freebsd-zig.sh \
   /buildscripts/
 
 COPY \
@@ -64,9 +69,7 @@ ENV \
 RUN \
   /buildscripts/freebsd-base.sh \
   && /buildscripts/freebsd-go.sh \
-  && /buildscripts/freebsd-rust.sh \
   && /buildscripts/freebsd-uv.sh \
-  && /buildscripts/freebsd-zig.sh \
   && rm -rf /buildscripts
 
 RUN pkg install sqlite3
