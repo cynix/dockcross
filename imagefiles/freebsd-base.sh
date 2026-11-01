@@ -5,7 +5,7 @@ set -o pipefail
 
 FREEBSD_VERSION_MAJOR=${FREEBSD_VERSION%.*}
 FREEBSD_VERSION_MINOR=${FREEBSD_VERSION#*.}
-PKG_VERSION=2.8.2
+PKG_VERSION=2.8.4
 
 mkdir -p /freebsd/work/build /freebsd/pkg/etc/pkg/repos /freebsd/pkg/keys/pkg/trusted /freebsd/pkg/keys/pkgbase-${FREEBSD_VERSION_MAJOR}/trusted
 
