@@ -19,6 +19,7 @@ RUN \
     && chmod 777 /opt/rustup
 
 COPY imagefiles/freebsd-pkg.sh /usr/local/bin/pkg
+COPY imagefiles/freebsd-pkg-config.sh /usr/local/bin/freebsd-pkg-config
 
 COPY \
   imagefiles/freebsd-base.sh \
@@ -34,18 +35,22 @@ ENV \
   FREEBSD_VERSION=15.1 \
   PATH=/usr/local/go/bin:${PATH} \
   AR=/usr/bin/llvm-ar-19 \
-  AS=/usr/bin/llvm-as-19 \
   CC=/usr/bin/clang-19 \
   CPP=/usr/bin/clang-cpp-19 \
   CXX=/usr/bin/clang++-19 \
   LD=/usr/bin/clang-19 \
-  CMAKE_TOOLCHAIN_FILE=/freebsd/Toolchain.cmake \
   GOOS=freebsd \
   CGO_ENABLED=1 \
   CC_FOR_freebsd_amd64="/usr/bin/clang-19 --target=x86_64-unknown-freebsd --sysroot=/freebsd/amd64" \
   CC_FOR_freebsd_arm64="/usr/bin/clang-19 --target=aarch64-unknown-freebsd --sysroot=/freebsd/aarch64" \
   CXX_FOR_freebsd_amd64="/usr/bin/clang++-19 --target=x86_64-unknown-freebsd --sysroot=/freebsd/amd64" \
   CXX_FOR_freebsd_arm64="/usr/bin/clang++-19 --target=aarch64-unknown-freebsd --sysroot=/freebsd/aarch64" \
+  CC_x86_64_unknown_freebsd=/usr/bin/clang-19 \
+  CC_aarch64_unknown_freebsd=/usr/bin/clang-19 \
+  CXX_x86_64_unknown_freebsd=/usr/bin/clang++-19 \
+  CXX_aarch64_unknown_freebsd=/usr/bin/clang++-19 \
+  CMAKE_TOOLCHAIN_FILE_x86_64_unknown_freebsd=/freebsd/Toolchain.cmake \
+  CMAKE_TOOLCHAIN_FILE_aarch64_unknown_freebsd=/freebsd/Toolchain.cmake \
   CFLAGS_x86_64_unknown_freebsd="--target=x86_64-unknown-freebsd --sysroot=/freebsd/amd64" \
   CFLAGS_aarch64_unknown_freebsd="--target=aarch64-unknown-freebsd --sysroot=/freebsd/aarch64" \
   CXXFLAGS_x86_64_unknown_freebsd="--target=x86_64-unknown-freebsd --sysroot=/freebsd/amd64 -stdlib=libc++" \
@@ -60,11 +65,9 @@ ENV \
   BINDGEN_EXTRA_CLANG_ARGS_aarch64_unknown_freebsd="--target=aarch64-unknown-freebsd --sysroot=/freebsd/aarch64" \
   X86_64_UNKNOWN_FREEBSD_OPENSSL_DIR=/freebsd/amd64/usr \
   AARCH64_UNKNOWN_FREEBSD_OPENSSL_DIR=/freebsd/aarch64/usr \
-  PKG_CONFIG_LIBDIR_x86_64_unknown_freebsd=/freebsd/amd64/usr/libdata/pkgconfig:/freebsd/amd64/usr/local/libdata/pkgconfig \
-  PKG_CONFIG_LIBDIR_aarch64_unknown_freebsd=/freebsd/aarch64/usr/libdata/pkgconfig:/freebsd/aarch64/usr/local/libdata/pkgconfig \
-  PKG_CONFIG_SYSROOT_DIR_x86_64_unknown_freebsd=/freebsd/amd64 \
-  PKG_CONFIG_SYSROOT_DIR_aarch64_unknown_freebsd=/freebsd/aarch64 \
-  PKG_CONFIG_PATH=""
+  PKG_CONFIG_x86_64_unknown_freebsd=/usr/local/bin/freebsd-pkg-config \
+  PKG_CONFIG_aarch64_unknown_freebsd=/usr/local/bin/freebsd-pkg-config \
+  HOST_PKG_CONFIG=/usr/bin/pkg-config
 
 RUN \
   /buildscripts/freebsd-base.sh \
@@ -72,6 +75,7 @@ RUN \
   && /buildscripts/freebsd-uv.sh \
   && rm -rf /buildscripts
 
+RUN go env -w PKG_CONFIG=/usr/local/bin/freebsd-pkg-config
 RUN pkg install sqlite3
 
 WORKDIR /work

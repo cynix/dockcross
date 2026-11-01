@@ -6,11 +6,13 @@ if [ -n "$FREEBSD_ARCH" ]; then
       export FREEBSD_ARCH=amd64
       export FREEBSD_SYSROOT=/freebsd/amd64
       export FREEBSD_TRIPLE=x86_64-unknown-freebsd
+      export GOARCH=amd64
       ;;
     arm64|aarch64)
       export FREEBSD_ARCH=aarch64
       export FREEBSD_SYSROOT=/freebsd/aarch64
       export FREEBSD_TRIPLE=aarch64-unknown-freebsd
+      export GOARCH=arm64
       ;;
     *)
       echo "Unsupported arch: $FREEBSD_ARCH"
@@ -18,18 +20,9 @@ if [ -n "$FREEBSD_ARCH" ]; then
       ;;
   esac
 
-  export CFLAGS="--target=$FREEBSD_TRIPLE --sysroot=$FREEBSD_SYSROOT"
-  export CXXFLAGS="--target=$FREEBSD_TRIPLE --sysroot=$FREEBSD_SYSROOT -stdlib=libc++"
-  export LDFLAGS="--target=$FREEBSD_TRIPLE --sysroot=$FREEBSD_SYSROOT -fuse-ld=lld"
-
-  export PKG_CONFIG_LIBDIR="$FREEBSD_SYSROOT/usr/libdata/pkgconfig:$FREEBSD_SYSROOT/usr/local/libdata/pkgconfig"
-  export PKG_CONFIG_SYSROOT_DIR="$FREEBSD_SYSROOT"
-  export PKG_CONFIG_PATH=""
-
-  export GOARCH="$(basename $FREEBSD_SYSROOT)"
-  export CGO_CFLAGS="$CFLAGS"
-  export CGO_CXXFLAGS="$CXXFLAGS"
-  export CGO_LDFLAGS="$LDFLAGS"
+  export CGO_CFLAGS="--target=$FREEBSD_TRIPLE --sysroot=$FREEBSD_SYSROOT"
+  export CGO_CXXFLAGS="$CGO_CFLAGS -stdlib=libc++"
+  export CGO_LDFLAGS="$CGO_CFLAGS -fuse-ld=lld"
 
   export CARGO_BUILD_TARGET="$FREEBSD_TRIPLE"
 fi

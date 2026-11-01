@@ -27,3 +27,5 @@ set(CMAKE_CXX_COMPILER_TARGET "$ENV{FREEBSD_TRIPLE}")
 set(CMAKE_EXE_LINKER_FLAGS_INIT "-fuse-ld=lld")
 set(CMAKE_MODULE_LINKER_FLAGS_INIT "-fuse-ld=lld")
 set(CMAKE_SHARED_LINKER_FLAGS_INIT "-fuse-ld=lld")
+
+set(PKG_CONFIG_EXECUTABLE /usr/local/bin/freebsd-pkg-config CACHE FILEPATH "FreeBSD pkg-config")
